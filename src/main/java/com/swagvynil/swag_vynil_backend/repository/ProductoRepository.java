@@ -3,6 +3,7 @@ package com.swagvynil.swag_vynil_backend.repository;
 import com.swagvynil.swag_vynil_backend.model.Producto;
 import org.springframework.data.jpa.repository.JpaRepository;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface ProductoRepository extends JpaRepository<Producto, Long> {
@@ -12,4 +13,8 @@ public interface ProductoRepository extends JpaRepository<Producto, Long> {
     boolean existsByCategoriaId(Long categoriaId);
 
     Optional<Producto> findFirstByCategoriaIdOrderByIdAsc(Long categoriaId);
+
+    List<Producto> findByCategoriaNombreIgnoreCase(String nombre);
+
+    List<Producto> findByDescuentoGreaterThan(int descuento);
 }
