@@ -2,6 +2,8 @@ package com.swagvynil.swag_vynil_backend.model;
 
 import jakarta.persistence.*;
 
+import java.time.LocalDate;
+
 @Entity
 @Table(name = "usuario")
 public class Usuario {
@@ -37,6 +39,9 @@ public class Usuario {
 
     @Column(length = 200)
     private String direccion;
+
+    @Column
+    private LocalDate fechaNacimiento;
 
     public Long getId() {
         return id;
@@ -116,5 +121,13 @@ public class Usuario {
 
     public void setDireccion(String direccion) {
         this.direccion = direccion;
+    }
+
+    public LocalDate getFechaNacimiento() {
+        return fechaNacimiento;
+    }
+
+    public void setFechaNacimiento(LocalDate fechaNacimiento) {
+        this.fechaNacimiento = fechaNacimiento;
     }
 }

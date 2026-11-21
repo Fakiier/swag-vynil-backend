@@ -6,6 +6,8 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
+import java.time.LocalDate;
+
 public record UsuarioRequest(
         @NotBlank String run,
         @NotBlank String nombre,
@@ -15,5 +17,6 @@ public record UsuarioRequest(
         @NotNull Rol rol,
         String region,
         String comuna,
-        String direccion
+        String direccion,
+        LocalDate fechaNacimiento
 ) {}

@@ -44,6 +44,7 @@ public class AuthService {
         u.setRegion(r.region());
         u.setComuna(r.comuna());
         u.setDireccion(r.direccion());
+        u.setFechaNacimiento(r.fechaNacimiento());
         u.setRol(Rol.CLIENTE); // quien se registra solo es Cliente
 
         usuarioRepository.save(u);

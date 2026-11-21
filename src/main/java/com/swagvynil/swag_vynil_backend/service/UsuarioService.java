@@ -89,5 +89,6 @@ public class UsuarioService {
         u.setRegion(r.region());
         u.setComuna(r.comuna());
         u.setDireccion(r.direccion());
+        u.setFechaNacimiento(r.fechaNacimiento());
     }
 }
