@@ -8,6 +8,10 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.beans.factory.annotation.Value;
+import com.swagvynil.swag_vynil_backend.model.Rol;
+import com.swagvynil.swag_vynil_backend.model.Usuario;
+import com.swagvynil.swag_vynil_backend.security.JwtService;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -18,6 +22,9 @@ class AuthUsuarioIntegrationTest {
 
     @Autowired
     private MockMvc mockMvc;
+
+    @Value("${jwt.secret}")
+    private String secret;
 
     // ---------- utilidades ----------
 
@@ -209,5 +216,46 @@ class AuthUsuarioIntegrationTest {
         mockMvc.perform(delete("/api/v1/usuarios/" + id)
                         .header("Authorization", "Bearer " + token))
                 .andExpect(status().isBadRequest());
+    }
+
+    // ---------- renovación de token ----------
+
+    @Test
+    @DisplayName("Renovación: un token vigente se renueva y el nuevo sirve para acceder")
+    void renovarConTokenVigente() throws Exception {
+        String token = tokenAdmin();
+
+        String respuesta = mockMvc.perform(post("/api/v1/auth/refresh")
+                        .header("Authorization", "Bearer " + token))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.rol").value("ADMINISTRADOR"))
+                .andExpect(jsonPath("$.token").isNotEmpty())
+                .andReturn().getResponse().getContentAsString();
+
+        String nuevoToken = JsonPath.read(respuesta, "$.token");
+
+        mockMvc.perform(get("/api/v1/usuarios")
+                        .header("Authorization", "Bearer " + nuevoToken))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    @DisplayName("Renovación: sin token responde 401")
+    void renovarSinToken() throws Exception {
+        mockMvc.perform(post("/api/v1/auth/refresh"))
+                .andExpect(status().isUnauthorized());
+    }
+
+    @Test
+    @DisplayName("Renovación: un token vencido no se puede renovar (401)")
+    void renovarTokenVencido() throws Exception {
+        Usuario u = new Usuario();
+        u.setCorreo("admin@duoc.cl");
+        u.setRol(Rol.ADMINISTRADOR);
+        String vencido = new JwtService(secret, -1_000).generarToken(u);
+
+        mockMvc.perform(post("/api/v1/auth/refresh")
+                        .header("Authorization", "Bearer " + vencido))
+                .andExpect(status().isUnauthorized());
     }
 }
