@@ -61,6 +61,12 @@ public class AuthService {
         return respuesta(u);
     }
 
+    public AuthResponse renovar(String correo) {
+        Usuario u = usuarioRepository.findByCorreo(correo)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Usuario no encontrado"));
+        return respuesta(u);
+    }
+
     private AuthResponse respuesta(Usuario u) {
         return new AuthResponse(jwtService.generarToken(u), u.getId(), u.getRun(),
                 u.getNombre(), u.getApellidos(), u.getCorreo(), u.getRol().name());
