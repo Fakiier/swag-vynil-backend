@@ -33,6 +33,9 @@ public class Boleta {
     @Column(length = 200)
     private String calle;
 
+    @Column(length = 50)
+    private String departamento;
+
     @Column(length = 100)
     private String region;
 
@@ -131,5 +134,13 @@ public class Boleta {
 
     public void setUsuario(Usuario usuario) {
         this.usuario = usuario;
+    }
+
+    public String getDepartamento() {
+        return departamento;
+    }
+
+    public void setDepartamento(String departamento) {
+        this.departamento = departamento;
     }
 }
