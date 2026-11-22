@@ -16,7 +16,7 @@ public record BoletaRequest(
         @NotBlank String comuna,
         String indicaciones,
         String metodoPago,
-        boolean pagoRechazado
+        Boolean pagoRechazado
 ) {
     public record Item(
             @NotNull Long productoId,

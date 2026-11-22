@@ -42,7 +42,7 @@ public class BoletaService {
         boleta.setRegion(r.region());
         boleta.setComuna(r.comuna());
         boleta.setIndicaciones(r.indicaciones());
-        boleta.setEstado(r.pagoRechazado() ? EstadoBoleta.FALLIDA : EstadoBoleta.COMPLETADA);
+        boleta.setEstado(Boolean.TRUE.equals(r.pagoRechazado()) ? EstadoBoleta.FALLIDA : EstadoBoleta.COMPLETADA);
 
         int total = 0;
         for (BoletaRequest.Item item : r.items()) {
