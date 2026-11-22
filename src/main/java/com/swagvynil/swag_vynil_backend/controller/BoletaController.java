@@ -2,6 +2,7 @@ package com.swagvynil.swag_vynil_backend.controller;
 
 import com.swagvynil.swag_vynil_backend.dto.BoletaRequest;
 import com.swagvynil.swag_vynil_backend.dto.BoletaResponse;
+import com.swagvynil.swag_vynil_backend.dto.ReporteResponse;
 import com.swagvynil.swag_vynil_backend.service.BoletaService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -9,6 +10,7 @@ import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 
@@ -56,4 +58,24 @@ public class BoletaController {
                 a.getAuthority().equals("ROLE_ADMINISTRADOR") || a.getAuthority().equals("ROLE_VENDEDOR"));
         return service.obtener(id, auth.getName(), esPersonal);
     }
+
+    @GetMapping("/reportes")
+    public ReporteResponse reportes(Authentication auth) {
+
+        boolean autorizado = auth.getAuthorities().stream()
+                .anyMatch(a ->
+                        a.getAuthority().equals("ROLE_ADMINISTRADOR")
+                                || a.getAuthority().equals("ROLE_VENDEDOR")
+                );
+
+        if (!autorizado) {
+            throw new ResponseStatusException(
+                    HttpStatus.FORBIDDEN,
+                    "No tienes permisos para consultar los reportes"
+            );
+        }
+
+        return service.generarReporte();
+    }
+
 }
