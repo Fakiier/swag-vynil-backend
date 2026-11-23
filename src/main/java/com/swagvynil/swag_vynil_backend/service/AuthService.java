@@ -44,6 +44,7 @@ public class AuthService {
         u.setRegion(r.region());
         u.setComuna(r.comuna());
         u.setDireccion(r.direccion());
+        u.setFechaNacimiento(r.fechaNacimiento());
         u.setRol(Rol.CLIENTE); // quien se registra solo es Cliente
 
         usuarioRepository.save(u);
@@ -57,6 +58,12 @@ public class AuthService {
         if (!passwordEncoder.matches(r.contrasena(), u.getContrasena())) {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Credenciales inválidas");
         }
+        return respuesta(u);
+    }
+
+    public AuthResponse renovar(String correo) {
+        Usuario u = usuarioRepository.findByCorreo(correo)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Usuario no encontrado"));
         return respuesta(u);
     }
 

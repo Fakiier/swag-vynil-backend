@@ -40,19 +40,22 @@ public class SecurityConfig {
                 .exceptionHandling(e -> e.authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED)))
                 .authorizeHttpRequests(auth -> auth
                         // Públicas
+                        .requestMatchers("/error").permitAll()
+                        .requestMatchers("/api/v1/auth/refresh").authenticated()
                         .requestMatchers("/api/v1/auth/**").permitAll()
                         .requestMatchers("/swagger-ui/**", "/swagger-ui.html", "/v3/api-docs/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/v1/productos/**", "/api/v1/categorias/**").permitAll()
-                        .requestMatchers("/error").permitAll()
-                        .requestMatchers("/api/v1/auth/**").permitAll()
 
                         // Solo Administrador
                         .requestMatchers("/api/v1/usuarios/**").hasRole("ADMINISTRADOR")
                         .requestMatchers(HttpMethod.POST, "/api/v1/productos/**", "/api/v1/categorias/**").hasRole("ADMINISTRADOR")
                         .requestMatchers(HttpMethod.PUT, "/api/v1/productos/**", "/api/v1/categorias/**").hasRole("ADMINISTRADOR")
                         .requestMatchers(HttpMethod.DELETE, "/api/v1/productos/**", "/api/v1/categorias/**").hasRole("ADMINISTRADOR")
+                        .requestMatchers(HttpMethod.GET, "/api/v1/boletas/usuario/**").hasRole("ADMINISTRADOR")
 
-                        // Boletas: ver todas = Administrador y Vendedor (el resto se ajusta en su módulo)
+                        // Boletas: la lista completa es del Administrador y el Vendedor.
+                        // Comprar, "mis boletas" y el detalle quedan para cualquier usuario con sesión
+                        // (el detalle valida en el servicio que un Cliente solo vea las suyas).
                         .requestMatchers(HttpMethod.GET, "/api/v1/boletas").hasAnyRole("ADMINISTRADOR", "VENDEDOR")
 
                         .anyRequest().authenticated()

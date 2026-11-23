@@ -16,18 +16,32 @@ public class Producto {
     @Column(length = 1000)
     private String descripcion;
 
+    // Precio base (sin descuento)
     @Column(nullable = false)
     private Integer precio;
 
     @Column(length = 255)
     private String imagen;
 
+    // Porcentaje de descuento (0 = sin oferta)
     @Column(nullable = false)
     private Integer descuento = 0;
+
+    @Column(nullable = false)
+    private Integer stock = 0;
+
+    @Column(name = "stock_critico", nullable = false)
+    private Integer stockCritico = 5;
 
     @ManyToOne(optional = false)
     @JoinColumn(name = "categoria_id")
     private Categoria categoria;
+
+    // Precio que paga el cliente. Las boletas deben usar este método.
+    public int precioFinal() {
+        int d = descuento == null ? 0 : descuento;
+        return (int) Math.round(precio * (1 - d / 100.0));
+    }
 
     public Long getId() {
         return id;
@@ -83,5 +97,21 @@ public class Producto {
 
     public void setImagen(String imagen) {
         this.imagen = imagen;
+    }
+
+    public Integer getStock() {
+        return stock;
+    }
+
+    public void setStock(Integer stock) {
+        this.stock = stock;
+    }
+
+    public Integer getStockCritico() {
+        return stockCritico;
+    }
+
+    public void setStockCritico(Integer stockCritico) {
+        this.stockCritico = stockCritico;
     }
 }
