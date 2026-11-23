@@ -285,5 +285,34 @@ class BoletaIntegrationTest {
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.estado").value("COMPLETADA"));
     }
+    @Test
+@DisplayName("Reportes: el vendedor puede consultar las estadísticas")
+void vendedorConsultaReportes() throws Exception {
+    mockMvc.perform(get("/api/v1/boletas/reportes")
+                    .header("Authorization", token(vendedor())))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.ventasTotales").exists())
+            .andExpect(jsonPath("$.cantidadBoletas").exists())
+            .andExpect(jsonPath("$.ticketPromedio").exists())
+            .andExpect(jsonPath("$.productosMasVendidos").isArray());
+}
+
+@Test
+@DisplayName("Reportes: el administrador puede consultar las estadísticas")
+void adminConsultaReportes() throws Exception {
+    mockMvc.perform(get("/api/v1/boletas/reportes")
+                    .header("Authorization", token(admin())))
+            .andExpect(status().isOk());
+}
+
+@Test
+@DisplayName("Reportes: un cliente no puede consultar las estadísticas")
+void clienteNoConsultaReportes() throws Exception {
+    Usuario cliente = crearCliente("90000014", "reportes@gmail.com");
+
+    mockMvc.perform(get("/api/v1/boletas/reportes")
+                    .header("Authorization", token(cliente)))
+            .andExpect(status().isForbidden());
+}
 
 }
